@@ -1,5 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.dispatch import receiver
+from django.db.models.signals import post_save
+from django_resized import ResizedImageField
 
 
 class UserAccountManager(BaseUserManager):
@@ -35,3 +38,26 @@ class UserAccount(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.email
+
+class Profile(models.Model):
+    bio= models.TextField(null=True, blank=True)
+    user= models.OneToOneField(UserAccount, on_delete= models.CASCADE, related_name= "profile")
+    address= models.CharField(max_length= 1000, null=True, blank=True)
+    thumbnail= ResizedImageField(size= [200, 200], quality= 100, upload_to= "authSystem", 
+        default= 'default.jpg')
+
+    class Meta:
+        verbose_name= "Profile"
+        verbose_name_plural= "Profiles"
+
+    def __str__(self):
+        return f"{self.user.name}'s Profile"
+
+@receiver(post_save, sender= UserAccount)
+def create_profile(sender, created, instance, *args, **kwargs):
+    if created:
+        Profile.objects.create(user= instance)
+
+@receiver(post_save, sender= UserAccount)
+def save_profile(sender, instance, *args, **kwargs):
+    instance.profile.save()
