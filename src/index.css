@@ -39,3 +39,15 @@ code {
   font-size: 1.2rem;
   margin-bottom: 40px;
 }
+.post-header h3 {
+  margin-left: 40px;
+}
+.post-header img {
+  height: 30px;
+  width: 30px;
+  object-fit: cover;
+  float: left;
+}
+.profile-img {
+  margin-left: 150px;
+}

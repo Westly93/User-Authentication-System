@@ -2,8 +2,39 @@ import React, { useState } from "react";
 import { Link, Navigate } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { motion } from "framer-motion";
 import { loginUser } from "../actions/authActions";
 
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      delay: 1.25,
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+  exit: {
+    x: "-100vw",
+    transition: { ease: "easeInOut" },
+  },
+};
+const errors = {
+  hidden: {
+    y: -100,
+  },
+  visible: {
+    y: 0,
+    transition: {
+      delay: 0.25,
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+};
 const Login = ({ loginUser, isAuthenticated, loginErrors }) => {
   const [formData, setFormData] = useState({
     email: "",
@@ -20,11 +51,24 @@ const Login = ({ loginUser, isAuthenticated, loginErrors }) => {
     return <Navigate to="/" />;
   }
   return (
-    <div className="mt-5">
+    <motion.div
+      className="mt-5"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <form onSubmit={onSubmit} style={{ width: "500px", margin: "auto" }}>
         <legend className="border-bottom mb-3 text-center">Login Now</legend>
         {loginErrors && (
-          <div className="alert alert-danger">{loginErrors.detail}</div>
+          <motion.div
+            variants={errors}
+            initial="hidden"
+            animate="visible"
+            className="alert alert-danger"
+          >
+            {loginErrors.detail}
+          </motion.div>
         )}
         <div className="form-group">
           <label className="text-danger mb-2">Email*</label>
@@ -62,7 +106,7 @@ const Login = ({ loginUser, isAuthenticated, loginErrors }) => {
           Dont have an account? <Link to="/signup">create new account</Link>
         </p>
       </form>
-    </div>
+    </motion.div>
   );
 };
 Login.propTypes = {

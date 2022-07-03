@@ -1,8 +1,26 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { Navigate } from "react-router-dom";
+import { motion } from "framer-motion";
 import { updateProfile } from "../actions/authActions";
 
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      delay: 1.25,
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+  exit: {
+    x: "-100vw",
+    transition: { ease: "easeInOut" },
+  },
+};
 const Profile = ({ profile, updateProfile, isAuthenticated }) => {
   const [thumbnail, setThumbnail] = useState();
   const [formData, setFormData] = useState({
@@ -21,11 +39,16 @@ const Profile = ({ profile, updateProfile, isAuthenticated }) => {
     return <Navigate to="/login" />;
   }
   return (
-    <div className="container">
+    <motion.div
+      className="container"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <div className="col-md-6 offset-2">
-        <h1 className="text-center">{profile.user.name}</h1>
         <form onSubmit={onSubmit} encType="multipart/form-data">
-          <legend>Update your Profile</legend>
+          <legend className="text-center">Update your Profile</legend>
           <div className="profile-img mb-3">
             <img
               className="rounded-circle text-center"
@@ -71,7 +94,7 @@ const Profile = ({ profile, updateProfile, isAuthenticated }) => {
           </div>
         </form>
       </div>
-    </div>
+    </motion.div>
   );
 };
 const mapStateToProps = (state) => ({

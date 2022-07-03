@@ -2,8 +2,26 @@ import React, { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { motion } from "framer-motion";
 import { resetPassword } from "../actions/authActions";
 
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      delay: 1.25,
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+  exit: {
+    x: "-100vw",
+    transition: { ease: "easeInOut" },
+  },
+};
 const PasswordReset = ({ resetPassword }) => {
   const [requestSent, setRequestSent] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,7 +39,13 @@ const PasswordReset = ({ resetPassword }) => {
     return <Navigate to="/" />;
   }
   return (
-    <div className="mt-5">
+    <motion.div
+      className="mt-5"
+      variants={containerVariants}
+      animate="visible"
+      initial="hidden"
+      exit="exit"
+    >
       <form onSubmit={onSubmit} style={{ width: "500px", margin: "auto" }}>
         <legend className="border-bottom mb-3 text-center">
           Password Reset Request
@@ -44,7 +68,7 @@ const PasswordReset = ({ resetPassword }) => {
           </button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 };
 PasswordReset.propTypes = {

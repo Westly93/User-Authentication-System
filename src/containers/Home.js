@@ -1,13 +1,51 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { connect } from "react-redux";
+import { motion } from "framer-motion";
 import AddPostModal from "../components/AddPostModal";
 
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      type: "spring",
+      delay: 1.25,
+      stiffness: 120,
+      when: "beforeChildren",
+      staggerChildren: 0.4,
+    },
+  },
+  exit: {
+    x: "-100vw",
+    transition: {
+      ease: "easeInOut",
+    },
+  },
+};
+const postVariants = {
+  hover: {
+    scale: 1.1,
+    cursor: "pointer",
+    transition: {
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+};
 const Home = ({ items, isAuthenticated }) => {
-  //console.log(items);
+  const navigate = useNavigate();
 
   return (
-    <div className="container mt-5">
+    <motion.div
+      className="container mt-5"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <div className="jumbotron">
         {isAuthenticated ? (
           <button
@@ -26,19 +64,32 @@ const Home = ({ items, isAuthenticated }) => {
         {items
           ? items.map((item) => {
               return (
-                <li className="post-info" key={item.id}>
-                  <Link to={`/posts/${item.id}`}>
-                    <h3>{item.title}</h3>
-                  </Link>
-                  <p>{item.body}</p>
-                  <small>{item.date_posted}</small>
-                </li>
+                <motion.div className="container">
+                  <motion.li
+                    variants={postVariants}
+                    whileHover="hover"
+                    className="post-info"
+                    key={item.id}
+                    onClick={() => navigate(`/posts/${item.id}`)}
+                  >
+                    <div className="post-header">
+                      <img
+                        className="rounded-circle"
+                        src={`http://127.0.0.1:8000${item.thumbnail}`}
+                        alt=""
+                      />
+                      <h3>{item.title}</h3>
+                    </div>
+                    <p>{item.body}</p>
+                    <small>{item.date_posted}</small>
+                  </motion.li>
+                </motion.div>
               );
             })
           : "Loading...."}
       </div>
       <AddPostModal />
-    </div>
+    </motion.div>
   );
 };
 const mapStateToProps = (state) => ({

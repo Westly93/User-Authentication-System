@@ -2,8 +2,26 @@ import React, { useState } from "react";
 import { Navigate, useParams } from "react-router-dom";
 import { connect } from "react-redux";
 import PropTypes from "prop-types";
+import { motion } from "framer-motion";
 import { resetPasswordConfirm } from "../actions/authActions";
 
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      delay: 1.25,
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+  exit: {
+    x: "-100vw",
+    transition: { ease: "easeInOut" },
+  },
+};
 const PasswordResetConfirm = ({ resetPasswordConfirm }) => {
   const [requestSent, setRequestSent] = useState(false);
   const [formData, setFormData] = useState({
@@ -25,12 +43,18 @@ const PasswordResetConfirm = ({ resetPasswordConfirm }) => {
     return <Navigate to="/" />;
   }
   return (
-    <div className="mt-5">
+    <motion.div
+      className="mt-5"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       <form onSubmit={onSubmit} style={{ width: "500px", margin: "auto" }}>
         <legend className="border-bottom mb-3 text-center">
           Reset Password Confirm
         </legend>
-        <div className="form-group">
+        <div className="form-group mb-3">
           <input
             placeholder="new password"
             value={new_password}
@@ -40,9 +64,9 @@ const PasswordResetConfirm = ({ resetPasswordConfirm }) => {
             className="form-control"
           />
         </div>
-        <div className="form-group">
+        <div className="form-group mb-3">
           <input
-            placeholder=" re new password"
+            placeholder=" Confirm new password"
             value={re_new_password}
             onChange={(e) => onChange(e)}
             type="password"
@@ -57,7 +81,7 @@ const PasswordResetConfirm = ({ resetPasswordConfirm }) => {
           </button>
         </div>
       </form>
-    </div>
+    </motion.div>
   );
 };
 PasswordResetConfirm.propTypes = {

@@ -1,10 +1,28 @@
 import React, { useState } from "react";
 import { useParams, Navigate } from "react-router-dom";
 import { connect } from "react-redux";
+import { motion } from "framer-motion";
 import { deletePost, updatePost } from "../actions/postActions";
 import UpdatePostModal from "../components/UpdatePostModal";
 
-const PostDetail = ({ isAuthenticated, items, user, deletePost }) => {
+const containerVariants = {
+  hidden: {
+    opacity: 0,
+  },
+  visible: {
+    opacity: 1,
+    transition: {
+      delay: 1.25,
+      type: "spring",
+      stiffness: 120,
+    },
+  },
+  exit: {
+    x: "-100vw",
+    transition: { ease: "easeInOut" },
+  },
+};
+const PostDetail = ({ isAuthenticated, items, profile, deletePost }) => {
   const [redirect, setRedirect] = useState(false);
   const { id } = useParams();
   const item = items
@@ -25,13 +43,26 @@ const PostDetail = ({ isAuthenticated, items, user, deletePost }) => {
     return <Navigate to="/" />;
   }
   return (
-    <div className="container">
+    <motion.div
+      className="container"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+    >
       {item ? (
         <div className="post-info">
-          <h3>{item.title}</h3>
+          <div className="post-header">
+            <img
+              className="rounded-circle"
+              src={`http://127.0.0.1:8000${item.thumbnail}`}
+              alt=""
+            />
+            <h3>{item.title}</h3>
+          </div>
           <p>{item.body}</p>
           <small>{item.date_posted}</small>
-          {isAuthenticated && user.name === item.author.name && (
+          {isAuthenticated && profile.user.name === item.author.name && (
             <div>
               <button
                 type="button"
@@ -100,12 +131,12 @@ const PostDetail = ({ isAuthenticated, items, user, deletePost }) => {
           </div>
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 const mapStateToProps = (state) => ({
   isAuthenticated: state.auth.isAuthenticated,
   items: state.posts.items,
-  user: state.auth.user,
+  profile: state.auth.user,
 });
 export default connect(mapStateToProps, { deletePost, updatePost })(PostDetail);

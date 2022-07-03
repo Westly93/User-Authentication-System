@@ -1,5 +1,6 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 import { Provider } from "react-redux";
+import { AnimatePresence } from "framer-motion";
 import store from "./store";
 import Home from "./containers/Home";
 import Login from "./containers/Login";
@@ -11,11 +12,12 @@ import Activate from "./containers/Activate";
 import Profile from "./containers/Profile";
 import Layout from "./hocs/Layout";
 function App() {
+  const location = useLocation();
   return (
     <Provider store={store}>
-      <Router>
-        <Layout>
-          <Routes>
+      <Layout>
+        <AnimatePresence>
+          <Routes location={location} key={location.key}>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/activate/:uid/:token" element={<Activate />} />
@@ -28,8 +30,8 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/posts/:id" element={<PostDetail />} />
           </Routes>
-        </Layout>
-      </Router>
+        </AnimatePresence>
+      </Layout>
     </Provider>
   );
 }
